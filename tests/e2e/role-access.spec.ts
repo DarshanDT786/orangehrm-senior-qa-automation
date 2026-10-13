@@ -3,8 +3,10 @@ import { LoginPage } from '../../src/pages/LoginPage';
 import { env } from '../../src/config/env';
 
 test('low-privilege user cannot access admin-only employee management @role', async ({ page }) => {
-  test.skip(!env.essUsername || !env.essPassword,
-    'Set ESS_USERNAME and ESS_PASSWORD to a valid low-privilege OrangeHRM account to run role authorization checks.');
+  test.skip(
+  !env.essUsername || !env.essPassword,
+  'Role-based access test skipped: valid ESS credentials are not configured. Configure a low-privilege account to verify admin-only access restrictions.'
+);
   const login = new LoginPage(page);
   await login.open();
   await login.login(env.essUsername, env.essPassword);

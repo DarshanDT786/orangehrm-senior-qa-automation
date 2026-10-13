@@ -60,6 +60,13 @@ npx playwright test --grep @smoke
 npx playwright test --grep @role
 npx playwright test tests/api
 ```
+### Role-based access test status
+
+The low-privilege role-access test is included but is skipped when `ESS_USERNAME` or `ESS_PASSWORD` is not configured. The public OrangeHRM demo does not guarantee that a suitable ESS account with the required permissions is available.
+
+To execute this test, configure valid credentials for an existing low-privilege account in `.env` or the appropriate GitHub Actions Secrets. Verify the account's permissions before running the test.
+
+The test has not been considered passed until it executes against an account with the expected restricted permissions. This limitation is intentional and is reported transparently rather than using unverified credentials or weakening the authorization assertion.
 
 ## Architecture / design decisions
 

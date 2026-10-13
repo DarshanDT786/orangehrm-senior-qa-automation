@@ -1,0 +1,21 @@
+{
+  "name": "orangehrm-senior-qa-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Senior QA Automation Engineer technical assessment - OrangeHRM lifecycle automation",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:e2e": "playwright test tests/e2e",
+    "test:api": "playwright test tests/api",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report artifacts/html-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^22.15.0",
+    "dotenv": "^16.4.7",
+    "typescript": "^5.8.3"
+  }
+}

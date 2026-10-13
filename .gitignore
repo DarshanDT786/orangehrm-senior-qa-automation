@@ -1,0 +1,10 @@
+node_modules/
+playwright-report/
+test-results/
+artifacts/html-report/
+artifacts/test-results/
+.env
+.env.*
+!.env.example
+.DS_Store
+artifacts/junit-results.xml

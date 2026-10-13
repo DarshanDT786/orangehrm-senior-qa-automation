@@ -1,0 +1,1 @@
+This directory is reserved for generated test evidence. Run `npm test` to create HTML/JUnit reports, traces, screenshots, videos, and related artifacts. No report is pre-populated because that would imply tests ran when they have not yet been executed in the target environment.

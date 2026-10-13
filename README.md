@@ -1,8 +1,10 @@
-# Senior QA Automation Engineer — OrangeHRM
+# Senior QA Automation Engineer Assessment — OrangeHRM
 
-A TypeScript + Playwright reference implementation for the supplied technical assessment. It covers a POM-based employee lifecycle, authenticated API verification, role-test hooks, CI execution, retry/trace/screenshot/video capture, HTML/JUnit reporting, and k6 performance-test templates.
+This repository contains a **TypeScript and Playwright automation framework** developed for the Senior QA Automation Engineer assessment. It uses the Page Object Model (POM) and includes employee lifecycle testing, API verification, role-based access test coverage, GitHub Actions CI, automated test reporting, and k6 performance-testing templates.
 
-> **Important:** The assignment points to the public OrangeHRM demo. Public demo accounts/data and availability can change, and it is not a controlled performance-test environment. Run destructive or repeated tests only where you have permission. No report in this repository should be described as a successful run until it has been executed and reviewed.
+The framework includes retry configuration and failure diagnostics such as screenshots, traces, and videos to help investigate test failures.
+
+**Note:** The project uses the public OrangeHRM demo environment. Test results and role-based access behavior depend on the availability and configuration of that environment. The role-access test requires valid ESS credentials, and the k6 scripts require a separately configured, authorized test environment.
 
 ## Tech stack
 - Playwright Test + TypeScript

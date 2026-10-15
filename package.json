@@ -10,7 +10,8 @@
     "test:api": "playwright test tests/api",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report artifacts/html-report",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "report:flaky": "node -e \"console.log(require('fs').readFileSync('artifacts/flaky-tests.md','utf8'))\""
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

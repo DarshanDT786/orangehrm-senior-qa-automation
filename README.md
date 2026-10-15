@@ -104,6 +104,14 @@ The scripts emit the standard k6 summary, custom duration metrics, and threshold
 - Stabilize environment dependencies and selectors; quarantine only with an owner and expiry date, not as a permanent way to hide failures.
 - Review failure trends weekly and remove retries that mask deterministic product defects.
 
+### Automated flaky-test report
+
+The custom Playwright reporter generates `artifacts/flaky-tests.md` after each test run. It identifies tests that pass after one or more retries, helping distinguish retry-passes from clean first-attempt passes.
+
+Run `npm run report:flaky` to display the most recently generated report. A report showing zero flaky tests means no test passed after a retry in that run; it does not mean every test passed.
+
+**Role-based access limitation:** The assessment includes role-based validation, but the public OrangeHRM demo's ESS account was unavailable during testing. The Admin PIM test verifies administrator access only. Lower-privilege access restrictions remain unverified until a valid ESS account is available.
+
 ## Before submission
 
 - [ ] Run `npm install`, `npm run typecheck`, and `npm test` against the intended environment.

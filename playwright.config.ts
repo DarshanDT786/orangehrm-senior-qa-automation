@@ -9,11 +9,12 @@ export default defineConfig({
   workers: process.env.CI ? 4 : undefined,
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  reporter: [
+    reporter: [
     ['list'],
     ['html', { outputFolder: 'artifacts/html-report', open: 'never' }],
     ['junit', { outputFile: 'artifacts/junit-results.xml' }],
-    ['json', { outputFile: 'artifacts/results.json' }]
+    ['json', { outputFile: 'artifacts/results.json' }],
+    ['./scripts/flaky-reporter.ts']
   ],
   outputDir: 'artifacts/test-results',
   use: {

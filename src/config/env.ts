@@ -1,10 +1,43 @@
+
 import 'dotenv/config';
 
+function requiredEnv(name: string, fallback?: string): string {
+  const value = process.env[name]?.trim() || fallback;
+
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable: ${name}. Check your .env file.`
+    );
+  }
+
+  return value;
+}
+
 export const env = {
-  baseUrl: process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com',
-  apiBaseUrl: process.env.API_BASE_URL || process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com',
-  adminUsername: process.env.ADMIN_USERNAME || 'Admin',
-  adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-  essUsername: process.env.ESS_USERNAME || '',
-  essPassword: process.env.ESS_PASSWORD || ''
+  get baseUrl(): string {
+    return requiredEnv(
+      'BASE_URL',
+      'https://opensource-demo.orangehrmlive.com'
+    ).replace(/\/$/, '');
+  },
+
+  get apiBaseUrl(): string {
+    return requiredEnv('API_BASE_URL', this.baseUrl).replace(/\/$/, '');
+  },
+
+  get adminUsername(): string {
+    return requiredEnv('ADMIN_USERNAME');
+  },
+
+  get adminPassword(): string {
+    return requiredEnv('ADMIN_PASSWORD');
+  },
+
+  get essUsername(): string {
+    return process.env.ESS_USERNAME?.trim() ?? '';
+  },
+
+  get essPassword(): string {
+    return process.env.ESS_PASSWORD ?? '';
+  }
 };

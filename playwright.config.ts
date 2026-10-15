@@ -12,7 +12,8 @@ export default defineConfig({
   reporter: [
     ['list'],
     ['html', { outputFolder: 'artifacts/html-report', open: 'never' }],
-    ['junit', { outputFile: 'artifacts/junit-results.xml' }]
+    ['junit', { outputFile: 'artifacts/junit-results.xml' }],
+    ['json', { outputFile: 'artifacts/results.json' }]
   ],
   outputDir: 'artifacts/test-results',
   use: {

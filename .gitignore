@@ -1,10 +1,17 @@
 node_modules/
+# Local credentials
+.env
+.env.*
+!.env.example
+# Generated Playwright reports and test artifacts
 playwright-report/
 test-results/
 artifacts/html-report/
 artifacts/test-results/
-.env
-.env.*
-!.env.example
-.DS_Store
+artifacts/blob-report/
+artifacts/results.json
 artifacts/junit-results.xml
+artifacts/flaky-tests.md
+all-blob-reports/
+# OS files
+.DS_Store

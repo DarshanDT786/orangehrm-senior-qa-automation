@@ -1,4 +1,5 @@
 name: QA Automation
+
 on:
   push:
     branches: [main, master]
@@ -9,36 +10,116 @@ jobs:
   playwright:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2]
+
     env:
       BASE_URL: ${{ vars.BASE_URL || 'https://opensource-demo.orangehrmlive.com' }}
-      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'Admin' }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'admin123' }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       ESS_USERNAME: ${{ secrets.ESS_USERNAME }}
       ESS_PASSWORD: ${{ secrets.ESS_PASSWORD }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm ci
+
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
+
       - name: Type check
         run: npm run typecheck
+
       - name: Run tests (parallel shards)
-        run: npx playwright test --shard=${{ matrix.shard }}/2
-      - name: Upload report and failure artifacts
+        run: >
+          npx playwright test
+          --shard=${{ matrix.shard }}/2
+          --reporter=list,blob,junit,json
+          --output=artifacts/test-results-shard-${{ matrix.shard }}
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: artifacts/junit-shard-${{ matrix.shard }}.xml
+          PLAYWRIGHT_JSON_OUTPUT_NAME: artifacts/results-shard-${{ matrix.shard }}.json
+
+      - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-artifacts-shard-${{ matrix.shard }}
-          path: |
-            artifacts/
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-shard-${{ matrix.shard }}
+          path: blob-report/
+          if-no-files-found: warn
+          retention-days: 14
+
+  merge-reports:
+    if: always() && needs.playwright.result != 'cancelled'
+    needs: playwright
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download blob reports
+        id: download-reports
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-shard-*
+          path: all-blob-reports
+          merge-multiple: true
+
+      - name: Check for blob reports
+        id: check-reports
+        if: always()
+        shell: bash
+        run: |
+          if [ -d all-blob-reports ] && find all-blob-reports -type f -name '*.zip' -print -quit | grep -q .; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          elif [ -d all-blob-reports ] && find all-blob-reports -type f -print -quit | grep -q .; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "No blob report files were downloaded; skipping report merge."
+          fi
+
+      - name: Merge Playwright reports
+        if: steps.check-reports.outputs.available == 'true'
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload merged HTML report
+        if: always() && steps.check-reports.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-playwright-html-report
+          path: playwright-report/
           if-no-files-found: warn
           retention-days: 14

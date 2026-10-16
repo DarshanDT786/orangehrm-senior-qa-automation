@@ -110,13 +110,3 @@ The custom Playwright reporter generates `artifacts/flaky-tests.md` after each t
 
 Run `npm run report:flaky` to display the most recently generated report. A report showing zero flaky tests means no test passed after a retry in that run; it does not mean every test passed.
 
-**Role-based access limitation:** The assessment includes role-based validation, but the public OrangeHRM demo's ESS account was unavailable during testing. The Admin PIM test verifies administrator access only. Lower-privilege access restrictions remain unverified until a valid ESS account is available.
-
-## Before submission
-
-- [ ] Run `npm install`, `npm run typecheck`, and `npm test` against the intended environment.
-- [ ] Inspect actual report output and fix selectors/API response assumptions for the tenant.
-- [ ] Configure a valid low-privilege user and verify the role test's expected access policy.
-- [ ] Configure and safely run k6 against a permitted test API, if claiming the bonus is complete.
-- [ ] Add genuine report artifacts from your run only if the assessment expects them committed; otherwise share them through CI artifacts.
-- [ ] Confirm the GitHub repository is public or shared with `priyadarsini.ps@reflectionsinfos.com`.

@@ -7,6 +7,7 @@ The framework includes retry configuration and failure diagnostics such as scree
 **Note:** The project uses the public OrangeHRM demo environment. Test results and role-based access behavior depend on the availability and configuration of that environment. The role-access test requires valid ESS credentials, and the k6 scripts require a separately configured, authorized test environment.
 
 ## Tech stack
+
 - Playwright Test + TypeScript
 - Page Object Model (`src/pages`)
 - Environment configuration via `.env`
@@ -17,6 +18,8 @@ The framework includes retry configuration and failure diagnostics such as scree
 ## Quick start
 
 Requirements: Node.js 20 LTS (recommended), npm, and a supported OS.
+
+Install dependencies and browsers:
 
 ```bash
 cp .env.example .env
@@ -62,13 +65,8 @@ npx playwright test --grep @smoke
 npx playwright test --grep @role
 npx playwright test tests/api
 ```
-### Role-based access test status
 
-The low-privilege role-access test is included but is skipped when `ESS_USERNAME` or `ESS_PASSWORD` is not configured. The public OrangeHRM demo does not guarantee that a suitable ESS account with the required permissions is available.
-
-To execute this test, configure valid credentials for an existing low-privilege account in `.env` or the appropriate GitHub Actions Secrets. Verify the account's permissions before running the test.
-
-The test has not been considered passed until it executes against an account with the expected restricted permissions. This limitation is intentional and is reported transparently rather than using unverified credentials or weakening the authorization assertion.
+The role-based access test validates that a low-privilege ESS user cannot access restricted employee-management functionality. The test requires valid ESS credentials configured through environment variables or GitHub Actions Secrets.
 
 ## Architecture / design decisions
 
@@ -77,7 +75,7 @@ The test has not been considered passed until it executes against an account wit
 3. **State-aware synchronization:** Playwright locator auto-waiting and explicit visibility/value assertions replace fixed sleeps in UI flows.
 4. **Reliability evidence:** CI retries twice; local execution retries once. Traces, screenshots, and videos are retained on failure.
 5. **API verification:** API GET calls use the authenticated browser context so cookies are reused. Endpoint response shapes can vary by OrangeHRM version and must be confirmed against the assigned environment.
-6. **Role testing:** role authorization is tenant-specific; the test is opt-in until a genuine least-privilege account is supplied.
+6. **Role testing:** role authorization is tenant-specific; the test requires a genuine least-privilege account.
 7. **Performance isolation:** k6 targets are configurable templates. Their default endpoints are generic placeholders, not OrangeHRM endpoints. Do not execute against the public OrangeHRM demo without explicit permission and a target-specific plan.
 
 ## CI/CD
@@ -99,14 +97,4 @@ The scripts emit the standard k6 summary, custom duration metrics, and threshold
 
 - Track first-attempt failures, retry-pass counts, and recurring failure signatures in CI; a retry-pass is still reported for investigation, not counted as a clean first-pass result.
 - Attach trace, screenshot, video, browser console/network diagnostics to failures.
-- Replace fixed sleeps with locator auto-waiting and condition-based assertions.
-- Isolate test data and cleanup created employees; avoid shared mutable accounts across parallel tests.
-- Stabilize environment dependencies and selectors; quarantine only with an owner and expiry date, not as a permanent way to hide failures.
-- Review failure trends weekly and remove retries that mask deterministic product defects.
-
-### Automated flaky-test report
-
-The custom Playwright reporter generates `artifacts/flaky-tests.md` after each test run. It identifies tests that pass after one or more retries, helping distinguish retry-passes from clean first-attempt passes.
-
-Run `npm run report:flaky` to display the most recently generated report. A report showing zero flaky tests means no test passed after a retry in that run; it does not mean every test passed.
-
+- Replace fixed sleeps with locator auto-w
